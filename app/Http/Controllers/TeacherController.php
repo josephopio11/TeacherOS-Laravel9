@@ -14,7 +14,9 @@ class TeacherController extends Controller
      */
     public function index()
     {
-        //
+        $teachers = Teacher::orderBy('id','desc')->paginate(10);
+
+        return view('teachers.index', compact('teachers'));
     }
 
     /**
@@ -24,7 +26,7 @@ class TeacherController extends Controller
      */
     public function create()
     {
-        //
+        return view('teachers.create');
     }
 
     /**
@@ -35,19 +37,22 @@ class TeacherController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|unique:teachers,name',
+            'dob' => ''
+        ]);
+
+        if ($validated){
+            Teacher::create($validated);
+
+            return redirect()->route('teacher.index')->with('message', 'Lesson added successfully');
+        }else {
+            return redirect()->back()->with('message', 'For sure you have done nothing. Try again!');
+        }
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Teacher  $teacher
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Teacher $teacher)
-    {
-        //
-    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -55,9 +60,13 @@ class TeacherController extends Controller
      * @param  \App\Models\Teacher  $teacher
      * @return \Illuminate\Http\Response
      */
-    public function edit(Teacher $teacher)
+    public function edit($id)
     {
-        //
+        $teachers = Teacher::orderBy('id','desc')->paginate(10);
+
+        $data = Teacher::findOrFail($id);
+
+        return view('teachers.edit', compact(['data', 'teachers']));
     }
 
     /**
@@ -67,9 +76,22 @@ class TeacherController extends Controller
      * @param  \App\Models\Teacher  $teacher
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Teacher $teacher)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|unique:teachers,name',
+            'dob' => ''
+        ]);
+
+        $teacher = Teacher::findOrFail($id);
+
+        if ($validated && $teacher){
+            $teacher->update($validated);
+
+            return redirect()->route('teacher.index')->with('message', 'Lesson updated successfully');
+        }else {
+            return redirect()->back()->with('message', 'For sure you have done nothing. Try again!');
+        }
     }
 
     /**
@@ -78,8 +100,12 @@ class TeacherController extends Controller
      * @param  \App\Models\Teacher  $teacher
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Teacher $teacher)
+    public function destroy($id)
     {
-        //
+        $data = Teacher::findOrFail($id);
+
+        $data->delete();
+
+        return redirect()->route('teacher.index')->with('message','Teacher deleted successfully');
     }
 }

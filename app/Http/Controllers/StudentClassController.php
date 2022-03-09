@@ -14,7 +14,9 @@ class StudentClassController extends Controller
      */
     public function index()
     {
-        //
+        $student_classes = StudentClass::orderBy('name','asc')->paginate(13);
+
+        return view('classes.index', compact('student_classes'));
     }
 
     /**
@@ -24,7 +26,7 @@ class StudentClassController extends Controller
      */
     public function create()
     {
-        //
+        return view('classes.create');
     }
 
     /**
@@ -35,51 +37,76 @@ class StudentClassController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|unique:student_classes,name',
+            'description' => ''
+        ]);
+
+        if ($validated){
+            StudentClass::create($validated);
+
+            return redirect()->route('class.index')->with('message', 'Lesson added successfully');
+        }else {
+            return redirect()->back()->with('message', 'For sure you have done nothing. Try again!');
+        }
+
+        // dd($validated);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\StudentClass  $studentClass
-     * @return \Illuminate\Http\Response
-     */
-    public function show(StudentClass $studentClass)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\StudentClass  $studentClass
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(StudentClass $studentClass)
+    public function edit($id)
     {
-        //
+        $student_classes = StudentClass::orderBy('id','desc')->paginate(13);
+
+        $data = StudentClass::findOrFail($id);
+
+        return view('classes.edit', compact(['data', 'student_classes']));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\StudentClass  $studentClass
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, StudentClass $studentClass)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|unique:student_classes,name',
+            'description' => ''
+        ]);
+
+        $studentclass = StudentClass::findOrFail($id);
+
+        if ($validated && $studentclass){
+            $studentclass->update($validated);
+
+            return redirect()->route('class.index')->with('message', 'Lesson updated successfully');
+        }else {
+            return redirect()->back()->with('message', 'For sure you have done nothing. Try again!');
+        }
+
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\StudentClass  $studentClass
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(StudentClass $studentClass)
+    public function destroy($id)
     {
-        //
+        $data = StudentClass::findOrFail($id);
+
+        $data->delete();
+
+        return redirect()->route('class.index')->with('message', 'studentclass Deleted Successfully');
     }
 }

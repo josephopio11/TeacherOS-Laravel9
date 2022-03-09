@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
 @section('custom_styles')
+
 @endsection
 
 @section('content')
-    <div class="page-body">
+        <div class="page-body">
         <div class="container-xl">
 
             <div class="page-header d-print-none">

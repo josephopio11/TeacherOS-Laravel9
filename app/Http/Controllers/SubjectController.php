@@ -14,7 +14,9 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        //
+        $subjects = Subject::orderBy('id','desc')->paginate(10);
+
+        return view('subjects.index', compact('subjects'));
     }
 
     /**
@@ -24,7 +26,7 @@ class SubjectController extends Controller
      */
     public function create()
     {
-        //
+        return view('subjects.create');
     }
 
     /**
@@ -35,51 +37,76 @@ class SubjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|unique:subjects,name',
+            'description' => ''
+        ]);
+
+        if ($validated){
+            Subject::create($validated);
+
+            return redirect()->route('subject.index')->with('message', 'Lesson added successfully');
+        }else {
+            return redirect()->back()->with('message', 'For sure you have done nothing. Try again!');
+        }
+
+        // dd($validated);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Subject  $subject
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Subject $subject)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Subject  $subject
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Subject $subject)
+    public function edit($id)
     {
-        //
+        $subjects = Subject::orderBy('id','desc')->paginate(10);
+
+        $data = Subject::findOrFail($id);
+
+        return view('subjects.edit', compact(['data', 'subjects']));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Subject  $subject
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Subject $subject)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|unique:subjects,name',
+            'description' => ''
+        ]);
+
+        $subject = Subject::findOrFail($id);
+
+        if ($validated && $subject){
+            $subject->update($validated);
+
+            return redirect()->route('subject.index')->with('message', 'Lesson updated successfully');
+        }else {
+            return redirect()->back()->with('message', 'For sure you have done nothing. Try again!');
+        }
+
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Subject  $subject
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Subject $subject)
+    public function destroy($id)
     {
-        //
+        $data = Subject::findOrFail($id);
+
+        $data->delete();
+
+        return redirect()->route('subject.index')->with('message', 'Subject Not Deleted Successfully');
     }
 }
