@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('student_classes', function (Blueprint $table) {
             $table->id();
+            $table->integer('name')->unique();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
