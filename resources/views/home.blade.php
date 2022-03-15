@@ -54,14 +54,8 @@
                 </div>
             </div>
 
-            <div class="alert alert-success">
-                <div class="alert-title">
-                    {{ __('Welcome') }} {{ auth()->user()->name ?? null }}
-                </div>
-                <div class="text-muted">
-                    {{ __('You are logged in!') }}
-                </div>
-            </div>
+            @include('layouts.notification')
+
             <div class="page-body">
                 <div class="row row-deck row-cards">
 

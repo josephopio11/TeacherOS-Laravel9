@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Lesson;
+use App\Models\Option;
+use App\Models\StudentClass;
 use App\Models\Subject;
 use App\Models\Teacher;
-use App\Models\StudentClass;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class LessonController extends Controller
@@ -22,9 +23,11 @@ class LessonController extends Controller
         $lessons = Lesson::with('user', 'teacher', 'studentClass')->paginate(20);
         $latest  = Lesson::latest()->with('teacher', 'user')->first();
 
+        $lessons_count = Lesson::count();
+
         // dd($latest);
 
-        return view('lessons.index', compact('lessons', 'latest', 'users'));
+        return view('lessons.index', compact('lessons', 'latest', 'users', 'lessons_count'));
     }
 
     /**
@@ -34,11 +37,12 @@ class LessonController extends Controller
      */
     public function create()
     {
+        $options  = Option::all();
         $teachers = Teacher::orderBy('name', 'asc')->get();
         $subjects = Subject::orderBy('name', 'asc')->get();
         $classes  = StudentClass::get();
 
-        return view('lessons.create', compact('teachers', 'subjects', 'classes'));
+        return view('lessons.create', compact('teachers', 'subjects', 'classes', 'options'));
     }
 
     /**
@@ -59,7 +63,7 @@ class LessonController extends Controller
             'teachers_id'         => 'required',
             'users_id'            => 'required',
             'topic'               => 'required',
-            'stream'              => '',
+            'stream'              => 'required',
             'scheme'              => 'required',
             'course_outline'      => 'required',
             'learning_objectives' => 'required',
@@ -127,11 +131,12 @@ class LessonController extends Controller
     {
         // dd($lesson);
 
+        $options  = Option::all();
         $teachers = Teacher::orderBy('name', 'asc')->get();
         $subjects = Subject::orderBy('name', 'asc')->get();
         $classes  = StudentClass::get();
 
-        return view('lessons.edit', ['lesson' => $lesson, 'teachers' => $teachers, 'subjects' => $subjects, 'classes' => $classes]);
+        return view('lessons.edit', ['lesson' => $lesson, 'teachers' => $teachers, 'subjects' => $subjects, 'classes' => $classes, 'options' => $options]);
     }
 
     /**

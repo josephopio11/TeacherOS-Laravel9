@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\StudentClass>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Option>
  */
-class StudentClassFactory extends Factory
+class OptionFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -16,9 +16,10 @@ class StudentClassFactory extends Factory
      */
     public function definition()
     {
-        static $num = 1;
+
         return [
-            'name' => $num++,
+            'mark' => 1,
+            'description' => "Below Average"
         ];
     }
 }
